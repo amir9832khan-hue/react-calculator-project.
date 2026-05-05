@@ -1,89 +1,114 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Search, Download, Gamepad2, ChevronLeft, Star, Filter, Home, TrendingUp, Clock, MessageCircle 
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Download, Gamepad2, Star, Home, TrendingUp, Play } from 'lucide-react';
 
-// --- DATA ---
 const gamesData = [
   {
     id: 1,
     title: "Tekken 3",
-    thumbnail: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=250&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1600861194942-f883de0dfe96?q=80&w=1000",
     genre: "Fighting",
     rating: 4.8,
     downloads: "2.5M",
-    description: "Classic fighting game with intense 3D battles and iconic characters.",
-    requirements: { os: "Win 7/8/10", ram: "128 MB", storage: "500 MB" }
+    description: "The classic king of iron fist tournament. Experience the legendary fighting game on your PC."
   },
   {
     id: 2,
-    title: "Need for Speed",
-    thumbnail: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400&h=250&fit=crop",
+    title: "Need for Speed: Most Wanted",
+    thumbnail: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000",
     genre: "Racing",
     rating: 4.9,
     downloads: "3.2M",
-    description: "High-speed racing with intense police chases."
+    description: "Outrun the police and climb the blacklist in the most iconic street racing game ever."
+  },
+  {
+    id: 3,
+    title: "GTA: Vice City",
+    thumbnail: "https://images.unsplash.com/photo-1580234811497-9df7fd2f357e?q=80&w=1000",
+    genre: "Open World",
+    rating: 4.7,
+    downloads: "5M",
+    description: "Welcome to the 80s. From the decade of big hair and pastel suits comes the story of one man's rise."
   }
 ];
 
-// --- COMPONENTS ---
-const GameGrid = ({ games, onGameClick }) => (
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-    {games.map(game => (
-      <div key={game.id} onClick={() => onGameClick(game)} className="bg-white/5 p-4 rounded-2xl border border-white/10 hover:border-blue-500 cursor-pointer transition-all">
-        <img src={game.thumbnail} className="rounded-xl mb-4 w-full h-40 object-cover" alt={game.title} />
-        <h3 className="text-xl font-bold">{game.title}</h3>
-        <div className="flex justify-between mt-2 text-sm text-blue-400">
-          <span>{game.genre}</span>
-          <span className="flex items-center"><Star className="w-3 h-3 mr-1"/>{game.rating}</span>
-        </div>
-      </div>
-    ))}
-  </div>
-);
-
-// --- MAIN APP ---
 export default function App() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedGame, setSelectedGame] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredGames = gamesData.filter(g => g.title.toLowerCase().includes(searchTerm.toLowerCase()));
-
-  if (selectedGame) {
-    return (
-      <div className="min-h-screen bg-black text-white p-6">
-        <button onClick={() => setSelectedGame(null)} className="flex items-center text-blue-400 mb-6">
-          <ChevronLeft /> Back to Home
-        </button>
-        <h1 className="text-4xl font-bold mb-4">{selectedGame.title}</h1>
-        <img src={selectedGame.thumbnail} className="w-full max-w-2xl rounded-3xl mb-6" />
-        <p className="text-xl text-gray-400 mb-8">{selectedGame.description}</p>
-        <button className="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-full font-bold flex items-center gap-2">
-          <Download /> Download Now
-        </button>
-      </div>
-    );
-  }
+  const filteredGames = gamesData.filter(game =>
+    game.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="min-h-screen bg-[#0a0a0c] text-white font-sans">
-      <nav className="p-6 border-b border-white/5 flex justify-between items-center">
-        <div className="flex items-center gap-2 font-bold text-2xl tracking-tighter">
-          <Gamepad2 className="text-blue-500" /> GAMEVAULT
+    <div className="min-h-screen bg-slate-950 text-white font-sans">
+      {/* Navigation */}
+      <nav className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Gamepad2 className="text-cyan-400 w-8 h-8" />
+            <span className="text-xl font-bold tracking-tighter">GAME<span className="text-cyan-400">VAULT</span></span>
+          </div>
+          
+          <div className="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+            <a href="#" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><Home size={18}/> Home</a>
+            <a href="#" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><TrendingUp size={18}/> Trending</a>
+          </div>
+
+          <div className="relative w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+            <input 
+              type="text"
+              placeholder="Search games..."
+              className="w-full bg-slate-800 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-cyan-500 transition-all outline-none"
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
       </nav>
-      
-      <div className="container mx-auto px-6 py-12">
-        <div className="relative mb-12">
-          <Search className="absolute left-4 top-4 text-gray-500" />
-          <input 
-            className="w-full bg-white/5 border border-white/10 p-4 pl-12 rounded-2xl outline-none focus:border-blue-500"
-            placeholder="Search games..."
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+
+      {/* Hero Section */}
+      <div className="relative h-[400px] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent z-10" />
+        <img 
+          src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2000" 
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          alt="Banner"
+        />
+        <div className="relative z-20 text-center px-4">
+          <h1 className="text-5xl md:text-7xl font-black mb-4 tracking-tight">UNLEASH THE <span className="text-cyan-400">GAMER</span></h1>
+          <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto">Download the most iconic PC games from our curated collection. High speed, no ads, just gaming.</p>
         </div>
-        <GameGrid games={filteredGames} onGameClick={setSelectedGame} />
       </div>
-    </div>
-  );
-}
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-bold flex items-center gap-3">
+            <Play className="fill-cyan-400 text-cyan-400" size={24} /> Popular Downloads
+          </h2>
+          <span className="text-sm text-cyan-400 font-semibold cursor-pointer hover:underline">View All</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredGames.map((game) => (
+            <div key={game.id} className="group bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 hover:border-cyan-500/50 transition-all hover:-translate-y-2 duration-300 shadow-2xl shadow-black">
+              <div className="relative h-48">
+                <img src={game.thumbnail} alt={game.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 text-xs font-bold border border-white/10">
+                  <Star className="text-yellow-400 fill-yellow-400" size={12} /> {game.rating}
+                </div>
+              </div>
+              
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-xl font-bold group-hover:text-cyan-400 transition-colors">{game.title}</h3>
+                  <span className="text-[10px] uppercase tracking-widest bg-cyan-500/10 text-cyan-400 px-2 py-1 rounded font-bold">{game.genre}</span>
+                </div>
+                <p className="text-slate-400 text-sm mb-6 line-clamp-2">{game.description}</p>
+                
+                <div className="flex items-center justify-between pt-4 border-t border-slate-800">
+                  <div className="text-xs text-slate-500 font-medium">
+                    <span className="text-slate-300">{game.downloads}</span> Downloads
+                  </div>
+                  <button className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-6 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-cyan-500/20">
+                    <Download size={16} /> Download
+                  </button
