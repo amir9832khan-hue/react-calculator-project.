@@ -1,0 +1,217 @@
+// App.js
+import React, { useState, useEffect } from 'react';
+import { 
+  Search, Download, Gamepad2, ChevronLeft, Star, Filter, Home, TrendingUp, Clock, MessageCircle 
+} from 'lucide-react';
+import GameGrid from './components/GameGrid';
+import GameDetail from './components/GameDetail';
+
+const gamesData = [
+  {
+    id: 1,
+    title: "Tekken 3",
+    thumbnail: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=250&fit=crop",
+    genre: "Fighting",
+    rating: 4.8,
+    downloads: "2.5M",
+    description: "Classic fighting game with intense 3D battles and iconic characters.",
+    screenshots: [
+      "https://images.unsplash.com/photo-1570549717069-33bed2ebafec?w=600&h=350&fit=crop",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=350&fit=crop",
+      "https://images.unsplash.com/photo-1611078489377-e1e9a0d9b08e?w=600&h=350&fit=crop"
+    ],
+    requirements: {
+      os: "Windows 7/8/10",
+      processor: "Pentium III 800MHz",
+      ram: "128 MB",
+      graphics: "DirectX 9.0c",
+      storage: "500 MB"
+    }
+  },
+  {
+    id: 2,
+    title: "Need for Speed: Most Wanted",
+    thumbnail: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400&h=250&fit=crop",
+    genre: "Racing",
+    rating: 4.9,
+    downloads: "3.2M",
+    description: "High-speed racing with intense police chases and car customization."
+  },
+  {
+    id: 3,
+    title: "GTA San Andreas",
+    thumbnail: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=250&fit=crop",
+    genre: "Open World",
+    rating: 4.7,
+    downloads: "5.1M",
+    description: "Epic open-world adventure with endless missions and exploration."
+  },
+  {
+    id: 4,
+    title: "FIFA 14",
+    thumbnail: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=250&fit=crop",
+    genre: "Sports",
+    rating: 4.6,
+    downloads: "1.8M",
+    description: "Ultimate football experience with realistic gameplay and graphics."
+  },
+  {
+    id: 5,
+    title: "Counter-Strike 1.6",
+    thumbnail: "https://images.unsplash.com/photo-1611078489377-e1e9a0d9b08e?w=400&h=250&fit=crop",
+    genre: "Shooter",
+    rating: 4.9,
+    downloads: "4.2M",
+    description: "Classic tactical shooter with competitive multiplayer gameplay."
+  },
+  {
+    id: 6,
+    title: "Age of Empires II",
+    thumbnail: "https://images.unsplash.com/photo-1570549717069-33bed2ebafec?w=400&h=250&fit=crop",
+    genre: "Strategy",
+    rating: 4.8,
+    downloads: "2.1M",
+    description: "Legendary RTS game with deep strategy and historical campaigns."
+  }
+];
+
+function App() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedGenre, setSelectedGenre] = useState('All');
+  const [selectedGame, setSelectedGame] = useState(null);
+  const [filteredGames, setFilteredGames] = useState(gamesData);
+
+  const genres = ['All', 'Fighting', 'Racing', 'Open World', 'Sports', 'Shooter', 'Strategy'];
+
+  useEffect(() => {
+    const filtered = gamesData.filter(game => 
+      game.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (selectedGenre === 'All' || game.genre === selectedGenre)
+    );
+    setFilteredGames(filtered);
+  }, [searchTerm, selectedGenre]);
+
+  const handleGameClick = (game) => {
+    setSelectedGame(game);
+  };
+
+  if (selectedGame) {
+    return <GameDetail game={selectedGame} onBack={() => setSelectedGame(null)} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-black text-white overflow-x-hidden">
+      <Navbar />
+      <HeroSection 
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        onSearch={() => {}}
+      />
+      <div className="container mx-auto px-4 py-12">
+        <FilterSection 
+          genres={genres}
+          selectedGenre={selectedGenre}
+          setSelectedGenre={setSelectedGenre}
+        />
+        <GameGrid games={filteredGames} onGameClick={handleGameClick} />
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+const Navbar = () => (
+  <nav className="backdrop-blur-xl bg-black/30 border-b border-white/10 sticky top-0 z-50">
+    <div className="container mx-auto px-4">
+      <div className="flex items-center justify-between h-16">
+        <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-2">
+            <Gamepad2 className="w-8 h-8 text-blue-400" />
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              GameVault
+            </span>
+          </div>
+        </div>
+        <div className="hidden md:flex items-center space-x-6">
+          <a href="#" className="flex items-center space-x-1 hover:text-blue-400 transition-colors">
+            <Home className="w-4 h-4" />
+            <span>Popular Games</span>
+          </a>
+          <a href="#" className="flex items-center space-x-1 hover:text-blue-400 transition-colors">
+            <TrendingUp className="w-4 h-4" />
+            <span>Latest Uploads</span>
+          </a>
+          <a href="#" className="flex items-center space-x-1 hover:text-blue-400 transition-colors">
+            <MessageCircle className="w-4 h-4" />
+            <span>Request a Game</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+);
+
+const HeroSection = ({ searchTerm, setSearchTerm, onSearch }) => (
+  <section 
+    className="relative h-[500px] md:h-[600px] bg-cover bg-center flex items-center"
+    style={{
+      backgroundImage: "url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
+    }}
+  >
+    <div className="absolute inset-0 bg-black/60" />
+    <div className="container mx-auto px-4 relative z-10 text-center">
+      <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-2xl">
+        GameVault
+      </h1>
+      <p className="text-xl md:text-2xl mb-12 opacity-90 max-w-2xl mx-auto leading-relaxed">
+        Download your favorite PC games instantly. Tekken 3, NFS, GTA and more!
+      </p>
+      <div className="max-w-2xl mx-auto">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6" />
+          <input
+            type="text"
+            placeholder="Search for Tekken 3, NFS Most Wanted, GTA..."
+            className="w-full pl-14 pr-4 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl text-lg focus:outline-none focus:ring-4 focus:ring-blue-500/30 transition-all duration-300"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+const FilterSection = ({ genres, selectedGenre, setSelectedGenre }) => (
+  <div className="flex flex-col sm:flex-row gap-4 mb-12 items-center justify-center">
+    <div className="flex items-center space-x-2 text-sm opacity-75">
+      <Filter className="w-4 h-4" />
+      <span>Filter by genre:</span>
+    </div>
+    <div className="flex flex-wrap gap-2 justify-center">
+      {genres.map(genre => (
+        <button
+          key={genre}
+          onClick={() => setSelectedGenre(genre)}
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+            selectedGenre === genre
+              ? 'bg-blue-500/20 border-2 border-blue-500 text-blue-300 shadow-lg shadow-blue-500/25'
+              : 'bg-white/5 border border-white/10 hover:bg-white/10'
+          }`}
+        >
+          {genre}
+        </button>
+      ))}
+    </div>
+  </div>
+);
+
+const Footer = () => (
+  <footer className="border-t border-white/10 mt-20 pt-12 pb-8">
+    <div className="container mx-auto px-4 text-center opacity-75 text-sm">
+      <p>&copy; 2024 GameVault. All rights reserved. For entertainment purposes only.</p>
+    </div>
+  </footer>
+);
+
+export default App;
